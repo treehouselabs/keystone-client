@@ -1,0 +1,33 @@
+{
+  "name": "treehouselabs/keystone-client",
+  "type": "project",
+  "description": "An HTTP client with automatic authentication for an OpenStack Identity Service API a.k.a. Keystone",
+  "keywords": ["openstack", "identity", "keystone", "authentication", "token"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jeroen Fiege",
+      "email": "jeroen@treehouse.nl"
+    },
+    {
+      "name": "Peter Kruithof",
+      "email": "peter@treehouse.nl"
+    }
+  ],
+  "require": {
+    "php": ">=5.4",
+    "psr/log": "~1.0",
+    "guzzle/guzzle": "~3.7",
+    "symfony/event-dispatcher": "~2.1",
+    "treehouselabs/cache": "~1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0"
+  },
+  "suggest": {
+    "monolog/monolog": "For logging request information"
+  },
+  "autoload": {
+    "psr-4": { "TreeHouse\\Keystone\\": "src/TreeHouse/Keystone" }
+  }
+}
