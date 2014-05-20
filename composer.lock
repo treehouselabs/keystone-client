@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "51ac8154830c9079f9786be6c3aeee99",
+    "hash": "ea905e262ef828f3aec1ec58d8c42c19",
     "packages": [
         {
             "name": "guzzle/guzzle",
@@ -193,20 +193,20 @@
         },
         {
             "name": "treehouselabs/cache",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/treehouselabs/cache.git",
-                "reference": "8b7a4bd6c909d967e45e8eae8211002700afded9"
+                "reference": "50f43caebe00b70904b8c744e0305c610bdbeccb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/treehouselabs/cache/zipball/8b7a4bd6c909d967e45e8eae8211002700afded9",
-                "reference": "8b7a4bd6c909d967e45e8eae8211002700afded9",
+                "url": "https://api.github.com/repos/treehouselabs/cache/zipball/50f43caebe00b70904b8c744e0305c610bdbeccb",
+                "reference": "50f43caebe00b70904b8c744e0305c610bdbeccb",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5"
+                "php": ">=5.4"
             },
             "require-dev": {
                 "ext-memcached": "*",
@@ -235,7 +235,7 @@
             "keywords": [
                 "cache"
             ],
-            "time": "2014-05-02 12:57:49"
+            "time": "2014-05-20 09:16:37"
         }
     ],
     "packages-dev": [
@@ -939,7 +939,7 @@
     "minimum-stability": "stable",
     "stability-flags": [],
     "platform": {
-        "php": ">=5.4"
+        "php": ">=5.5"
     },
     "platform-dev": []
 }
