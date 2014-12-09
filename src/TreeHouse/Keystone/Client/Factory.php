@@ -75,10 +75,10 @@ class Factory implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            'client.initialize' => array('onInitialize'),
-            'request.error' => array('onRequestError')
-        );
+        return [
+            'client.initialize' => ['onInitialize'],
+            'request.error' => ['onRequestError']
+        ];
     }
 
     /**
@@ -96,16 +96,24 @@ class Factory implements EventSubscriberInterface
     /**
      * Listener for request errors. Handles requests with expired
      * authentication, by reauthenticating and sending the request again.
+     *
+     * @param Event $event
      */
     public function onRequestError(Event $event)
     {
+        /** @var \Guzzle\Http\Message\Request $request */
+        $request = $event['request'];
+
+        /** @var \Guzzle\Http\Message\Response $response */
+        $response = $event['response'];
+
         // if token validity expired, re-request with a new token.
-        if (in_array($event['response']->getStatusCode(), array(401, 403))) {
-            /** @var \Guzzle\Http\Message\Request $request */
-            $request = $event['request'];
+        if (in_array($response->getStatusCode(), [401, 403])) {
+            /** @var Client $client */
+            $client = $request->getClient();
 
             // if this is the token-url, stop now because we won't be able to fetch a token
-            if ($request->getUrl() === $request->getClient()->getTokenUrl()) {
+            if ($request->getUrl() === $client->getTokenUrl()) {
                 return;
             }
 
@@ -118,13 +126,15 @@ class Factory implements EventSubscriberInterface
 
             $retries = $request->hasHeader('X-Auth-Retries') ? $retriesValue : 1;
             if ($retries < 1) {
-                $this->logger->error('Keystone request failed, no more retries left');
+                if ($this->logger) {
+                    $this->logger->error('Keystone request failed, no more retries left');
+                }
 
                 return;
             }
 
             if ($this->logger) {
-                $this->logger->debug('Token expired, fetching a new one');
+                $this->logger->debug('Token expired');
             }
 
             // set new token in client
@@ -150,6 +160,10 @@ class Factory implements EventSubscriberInterface
      */
     protected function resetToken(Client $client)
     {
+        if ($this->logger) {
+            $this->logger->debug('Resetting token');
+        }
+
         $token = $this->getToken($client, true);
         $client->setToken($token);
     }
@@ -180,6 +194,10 @@ class Factory implements EventSubscriberInterface
         // see if token is in cache
         if (!$forceNew && $cachedToken = $this->cache->get($tokenName)) {
             $token = unserialize($cachedToken);
+
+            if ($this->logger) {
+                $this->logger->debug('Obtained token from cache');
+            }
         }
 
         if (!isset($token) || !($token instanceof Token) || $this->tokenIsExpired($token)) {
@@ -197,14 +215,18 @@ class Factory implements EventSubscriberInterface
      */
     protected function createToken(Client $client)
     {
-        $data = array(
-            'auth' => array(
-                'passwordCredentials' => array(
+        if ($this->logger) {
+            $this->logger->debug('Requesting a new token');
+        }
+
+        $data = [
+            'auth' => [
+                'passwordCredentials' => [
                     'password' => $client->getKeystonePassword(),
                     'username' => $client->getKeystoneUsername()
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
         if ($name = $client->getTenantName()) {
             $data['auth']['tenantName'] = $name;
