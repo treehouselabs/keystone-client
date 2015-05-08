@@ -17,17 +17,24 @@
   "require": {
     "php": ">=5.5",
     "psr/log": "~1.0",
-    "guzzle/guzzle": "~3.7",
-    "symfony/event-dispatcher": "~2.1",
+    "guzzlehttp/guzzle": "~5.0",
     "treehouselabs/cache": "~1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.0"
+    "phpunit/phpunit": "~4.0",
+    "scrutinizer/ocular": "~1.1"
   },
   "suggest": {
     "monolog/monolog": "For logging request information"
   },
   "autoload": {
-    "psr-4": { "TreeHouse\\Keystone\\": "src/TreeHouse/Keystone" }
+    "psr-4": {
+      "TreeHouse\\Keystone\\": "src/TreeHouse/Keystone/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TreeHouse\\Keystone\\Tests\\": "tests/TreeHouse/Keystone/Tests/"
+    }
   }
 }
