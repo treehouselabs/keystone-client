@@ -111,7 +111,7 @@ class KeystoneTokenSubscriberTest extends \PHPUnit_Framework_TestCase
         $cache
             ->expects($this->once())
             ->method('set')
-            ->with($this->stringStartsWith('keystone_token_'), json_encode($this->token), $this->greaterThanOrEqual($ttl))
+            ->with($this->stringStartsWith('keystone_token_'), json_encode($this->token), $this->lessThanOrEqual($ttl))
         ;
 
         $client = $this->createClientMock();
@@ -146,7 +146,7 @@ class KeystoneTokenSubscriberTest extends \PHPUnit_Framework_TestCase
         $cache
             ->expects($this->once())
             ->method('set')
-            ->with($this->stringStartsWith('keystone_token_'), json_encode($this->token), $this->greaterThanOrEqual($ttl))
+            ->with($this->stringStartsWith('keystone_token_'), json_encode($this->token), $this->lessThanOrEqual($ttl))
         ;
 
         $client = $this->createClientMock();
@@ -183,7 +183,7 @@ class KeystoneTokenSubscriberTest extends \PHPUnit_Framework_TestCase
         $cache
             ->expects($this->once())
             ->method('set')
-            ->with($this->stringStartsWith('keystone_token_'), json_encode($this->token), $this->greaterThanOrEqual($ttl))
+            ->with($this->stringStartsWith('keystone_token_'), json_encode($this->token), $this->lessThanOrEqual($ttl))
         ;
 
         $client = $this->createClientMock();
