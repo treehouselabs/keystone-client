@@ -5,6 +5,7 @@ A client to use when communicating with Keystone services. Uses Guzzle as the
 actual HTTP client library.
 
 [![Build Status](https://travis-ci.org/treehouselabs/keystone-client.svg)](https://travis-ci.org/treehouselabs/keystone-client)
+[![Code Coverage](https://scrutinizer-ci.com/g/treehouselabs/keystone-client/badges/coverage.png)](https://scrutinizer-ci.com/g/treehouselabs/keystone-client/)
 
 ## Installation
 
