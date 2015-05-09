@@ -173,7 +173,7 @@ class Token implements \JsonSerializable
      *
      * @return mixed
      */
-    private static function arrayGet(array $array, $key)
+    protected static function arrayGet(array $array, $key)
     {
         $key   = strtolower($key);
         $array = array_change_key_case($array, CASE_LOWER);
