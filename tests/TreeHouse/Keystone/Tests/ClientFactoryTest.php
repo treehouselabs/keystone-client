@@ -90,6 +90,21 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \RuntimeException
+     */
+    public function testCreateClientWithoutPublicEndpoint()
+    {
+        $token = new Token(uniqid(), new \DateTime('+1 hour'));
+        $token->addServiceCatalog('compute', 'api', [['adminUrl' => 'http://example.org/v1']]);
+
+        $cache = $this->getCacheMock();
+        $cache->expects($this->once())->method('get')->will($this->returnValue(json_encode($token)));
+
+        $factory = new ClientFactory($cache, TestClient::class);
+        $factory->createClient($this->tenant);
+    }
+
+    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|CacheInterface
      */
     private function getCacheMock()

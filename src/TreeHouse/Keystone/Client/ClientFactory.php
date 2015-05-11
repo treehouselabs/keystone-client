@@ -109,7 +109,7 @@ class ClientFactory
             }
         }
 
-        return null;
+        throw new \RuntimeException('No endpoint with a public url found');
     }
 
     /**
