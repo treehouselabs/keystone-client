@@ -202,7 +202,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
-                // missing endpoint type
+                // invalid endpoint structure (2)
                 [
                     'access' => [
                         'token'          => [
@@ -212,28 +212,10 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                         'servicecatalog' => [
                             [
                                 'name'      => 'test',
-                                'endpoints' => [
-                                    'adminurl' => 'http://example.org',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
-                // missing endpoint name
-                [
-                    'access' => [
-                        'token'          => [
-                            'id'      => 1234,
-                            'expires' => '2014-07-25T10:32:05+0000',
-                        ],
-                        'servicecatalog' => [
-                            [
                                 'type'      => 'compute',
                                 'endpoints' => [
-                                    'adminurl' => 'http://example.org',
-                                ],
+                                    'http://example.org',
+                                ]
                             ],
                         ],
                     ],
@@ -252,7 +234,45 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                                 'name'      => 'test',
                                 'type'      => 'compute',
                                 'endpoints' => [
-                                    'foo' => 'bar',
+                                    ['foo' => 'bar',]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                // missing endpoint type
+                [
+                    'access' => [
+                        'token'          => [
+                            'id'      => 1234,
+                            'expires' => '2014-07-25T10:32:05+0000',
+                        ],
+                        'servicecatalog' => [
+                            [
+                                'name'      => 'test',
+                                'endpoints' => [
+                                    ['adminurl' => 'http://example.org',]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                // missing endpoint name
+                [
+                    'access' => [
+                        'token'          => [
+                            'id'      => 1234,
+                            'expires' => '2014-07-25T10:32:05+0000',
+                        ],
+                        'servicecatalog' => [
+                            [
+                                'type'      => 'compute',
+                                'endpoints' => [
+                                    ['adminurl' => 'http://example.org',]
                                 ],
                             ],
                         ],

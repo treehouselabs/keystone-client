@@ -95,7 +95,7 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateClientWithoutPublicEndpoint()
     {
         $token = new Token(uniqid(), new \DateTime('+1 hour'));
-        $token->addServiceCatalog('compute', 'api', [['adminUrl' => 'http://example.org/v1']]);
+        $token->addServiceCatalog('object-store', 'cdn', [['adminUrl' => 'http://example.org/v1']]);
 
         $cache = $this->getCacheMock();
         $cache->expects($this->once())->method('get')->will($this->returnValue(json_encode($token)));
