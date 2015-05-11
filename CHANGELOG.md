@@ -12,12 +12,12 @@ CHANGELOG
 * Renamed `TreeHouse\Keystone\Client\Factory => TreeHouse\Keystone\Client\ClientFactory`
 * Added `$class` as second constructor argument in constructor
 
-Before, the Keystone Client extended the Guzzle Client class and added the
+Before, the Keystone Client extended the Guzzle Client class and provided the
 token injection. This has been refactored to better use Guzzle's features. The
 Client class has been replaced with an event subscriber.
 
 If you're just using the factory method, you need to update the referencing
-namespace, and pass a Tenant object instead of separate `url`/`user`/`pass`
+class, and pass a Tenant object instead of separate `url`/`user`/`pass`
 parameters:
 
 Before:
