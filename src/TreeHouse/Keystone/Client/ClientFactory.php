@@ -99,9 +99,17 @@ class ClientFactory
      */
     protected function getPublicUrl(Tenant $tenant, Token $token)
     {
-        $catalog = array_change_key_case($token->getServiceCatalog($tenant->getServiceType(), $tenant->getServiceName()), CASE_LOWER);
+        $catalog = $token->getServiceCatalog($tenant->getServiceType(), $tenant->getServiceName());
 
-        return $catalog['publicurl'];
+        // use the first endpoint that has a public url
+        foreach ($catalog as $endpoint) {
+            $endpoint = array_change_key_case($endpoint, CASE_LOWER);
+            if (array_key_exists('publicurl', $endpoint)) {
+                return $endpoint['publicurl'];
+            }
+        }
+
+        throw new \RuntimeException('No endpoint with a public url found');
     }
 
     /**

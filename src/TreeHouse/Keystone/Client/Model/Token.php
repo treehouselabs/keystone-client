@@ -51,6 +51,21 @@ class Token implements \JsonSerializable
             $this->catalogs[$type] = [];
         }
 
+        // check if endpoints config is correct
+        foreach ($endpoints as $index => $endpoint) {
+            if (!is_array($endpoint)) {
+                throw new \InvalidArgumentException('Expecting an array for an endpoint');
+            }
+
+            $endpoints[$index] = array_change_key_case($endpoint, CASE_LOWER);
+
+            if (!isset($endpoints[$index]['publicurl']) && !isset($endpoints[$index]['adminurl'])) {
+                throw new \InvalidArgumentException(
+                    sprintf('An endpoint must have either a "publicurl" or "adminurl" key, got %s', json_encode($endpoint))
+                );
+            }
+        }
+
         $this->catalogs[$type][$name] = $endpoints;
     }
 
