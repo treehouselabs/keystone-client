@@ -22,12 +22,12 @@ class TokenTest extends \PHPUnit_Framework_TestCase
         $type      = 'compute';
         $name      = 'api';
         $endpoint1 = [
-            'adminUrl'  => 'https://admin.example.org',
-            'publicUrl' => 'https://example.org',
+            'adminurl'  => 'https://admin.example.org',
+            'publicurl' => 'https://example.org',
         ];
         $endpoint2 = [
-            'adminUrl'  => 'https://admin.example.org',
-            'publicUrl' => 'https://example.org',
+            'adminurl'  => 'https://admin.example.org',
+            'publicurl' => 'https://example.org',
         ];
 
         $token = new Token(uniqid(), new \DateTime('+ 1 minute'));
@@ -50,7 +50,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     public function testSerialization()
     {
         $token = new Token(uniqid(), new \DateTime('+ 1 minute'));
-        $token->addServiceCatalog('compute', 'test', [['adminUrl' => 'https://admin.example.org', 'publicUrl' => 'https://example.org']]);
+        $token->addServiceCatalog('compute', 'test', [['adminurl' => 'https://admin.example.org', 'publicurl' => 'https://example.org']]);
 
         $serialized = json_encode($token);
         $this->assertInternalType('string', $serialized);
@@ -113,12 +113,14 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
+                // no 'access' component
                 [],
             ],
             [
                 ['access' => []],
             ],
             [
+                // no 'expires' key
                 [
                     'access' => [
                         'token' => [
@@ -128,6 +130,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                // no service catalog
                 [
                     'access' => [
                         'token'          => [
@@ -138,6 +141,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                // empty service catalog
                 [
                     'access' => [
                         'token'          => [
@@ -151,6 +155,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                // invalid 'expires' value
                 [
                     'access' => [
                         'token'          => [
@@ -161,6 +166,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                // no endpoints in catalog
                 [
                     'access' => [
                         'token'          => [
@@ -178,6 +184,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                // invalid endpoint structure
                 [
                     'access' => [
                         'token'          => [
@@ -195,6 +202,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                // missing endpoint type
                 [
                     'access' => [
                         'token'          => [
@@ -213,6 +221,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                // missing endpoint name
                 [
                     'access' => [
                         'token'          => [
@@ -230,6 +239,26 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            [
+                // missing endpoint url
+                [
+                    'access' => [
+                        'token'          => [
+                            'id'      => 1234,
+                            'expires' => '2014-07-25T10:32:05+0000',
+                        ],
+                        'servicecatalog' => [
+                            [
+                                'name'      => 'test',
+                                'type'      => 'compute',
+                                'endpoints' => [
+                                    'foo' => 'bar',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -239,7 +268,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     public function testUndefinedServiceCatalogType()
     {
         $token = new Token(uniqid(), new \DateTime('+ 1 minute'));
-        $token->addServiceCatalog('compute', 'test', [['adminUrl' => 'https://admin.example.org', 'publicUrl' => 'https://example.org']]);
+        $token->addServiceCatalog('compute', 'test', [['adminurl' => 'https://admin.example.org', 'publicurl' => 'https://example.org']]);
 
         $token->getServiceCatalog('object-store');
     }
@@ -250,7 +279,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     public function testUndefinedServiceCatalogName()
     {
         $token = new Token(uniqid(), new \DateTime('+ 1 minute'));
-        $token->addServiceCatalog('compute', 'test', [['adminUrl' => 'https://admin.example.org', 'publicUrl' => 'https://example.org']]);
+        $token->addServiceCatalog('compute', 'test', [['adminurl' => 'https://admin.example.org', 'publicurl' => 'https://example.org']]);
 
         $token->getServiceCatalog('compute', 'api');
     }

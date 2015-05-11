@@ -42,7 +42,7 @@ class KeystoneTokenSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->tenant = new Tenant($url, $user, $pass, $serviceType, $serviceName, $tenantName);
 
         $this->token = new Token(uniqid(), new \DateTime('+1 hour'));
-        $this->token->addServiceCatalog($serviceType, $serviceName, ['publicUrl' => 'http://example.org/v1']);
+        $this->token->addServiceCatalog($serviceType, $serviceName, [['publicUrl' => 'http://example.org/v1']]);
     }
 
     /**
