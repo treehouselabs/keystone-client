@@ -82,13 +82,11 @@ class ClientFactory
         // public url from it, and we cannot change the base url later on.
         $token = $subscriber->getToken(new $class($config));
 
-        return new $class(array_merge(
-            $config,
-            [
-                'base_url'    => $this->getPublicUrl($tenant, $token),
-                'subscribers' => [$subscriber],
-            ]
-        ));
+        /** @var ClientInterface $client */
+        $client = new $class(array_merge($config, ['base_url' => $this->getPublicUrl($tenant, $token)]));
+        $client->getEmitter()->attach($subscriber);
+
+        return $client;
     }
 
     /**

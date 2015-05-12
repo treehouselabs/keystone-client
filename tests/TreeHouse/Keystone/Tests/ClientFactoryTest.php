@@ -53,6 +53,36 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
 
         $client = $factory->createClient($this->tenant);
         $this->assertInstanceOf(ClientInterface::class, $client);
+
+        /** @var KeystoneTokenSubscriber $subscriber */
+        $subscriber = $this
+            ->getMockBuilder(KeystoneTokenSubscriber::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getToken'])
+            ->getMock()
+        ;
+
+        foreach ($subscriber->getEvents() as $name => $events) {
+            $this->assertTrue($client->getEmitter()->hasListeners($name));
+
+            $listeners = $client->getEmitter()->listeners($name);
+
+            foreach ($events as $method) {
+                $found = false;
+                foreach ($listeners as $listener) {
+                    if (!is_array($listener)) {
+                        continue;
+                    }
+
+                    list ($subscriber, $name) = $listener;
+                    if ($subscriber instanceof KeystoneTokenSubscriber && $name === $method) {
+                        $found = true;
+                    }
+                }
+
+                $this->assertTrue($found, sprintf('KeystoneTokenSubscriber::%s not attached to emitter', $method));
+            }
+        }
     }
 
     public function testClientWithToken()
@@ -134,6 +164,7 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
         $mock = $this
             ->getMockBuilder(KeystoneTokenSubscriber::class)
             ->setConstructorArgs([$this->getCacheMock(), $this->tenant])
+            ->setMethods(['getToken', 'setLogger'])
             ->getMock()
         ;
 
