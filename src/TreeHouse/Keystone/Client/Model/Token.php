@@ -2,6 +2,8 @@
 
 namespace TreeHouse\Keystone\Client\Model;
 
+use TreeHouse\Keystone\Client\Exception\TokenException;
+
 class Token implements \JsonSerializable
 {
     /**
@@ -25,8 +27,8 @@ class Token implements \JsonSerializable
      */
     public function __construct($id, \DateTime $expires)
     {
-        $this->id       = $id;
-        $this->expires  = $expires;
+        $this->id = $id;
+        $this->expires = $expires;
         $this->catalogs = [];
     }
 
@@ -54,13 +56,13 @@ class Token implements \JsonSerializable
         // check if endpoints config is correct
         foreach ($endpoints as $index => $endpoint) {
             if (!is_array($endpoint)) {
-                throw new \InvalidArgumentException('Expecting an array for an endpoint');
+                throw new TokenException('Expecting an array for an endpoint');
             }
 
             $endpoints[$index] = array_change_key_case($endpoint, CASE_LOWER);
 
             if (!isset($endpoints[$index]['publicurl']) && !isset($endpoints[$index]['adminurl'])) {
-                throw new \InvalidArgumentException(
+                throw new TokenException(
                     sprintf('An endpoint must have either a "publicurl" or "adminurl" key, got %s', json_encode($endpoint))
                 );
             }
@@ -73,14 +75,14 @@ class Token implements \JsonSerializable
      * @param string $type
      * @param string $name
      *
-     * @throws \OutOfBoundsException
+     * @throws TokenException
      *
      * @return array
      */
     public function getServiceCatalog($type, $name = null)
     {
         if (!array_key_exists($type, $this->catalogs) || empty($this->catalogs[$type])) {
-            throw new \OutOfBoundsException(sprintf('There is no catalog for "%s"', $type));
+            throw new TokenException(sprintf('There is no catalog for "%s"', $type));
         }
 
         $catalogs = $this->catalogs[$type];
@@ -90,7 +92,7 @@ class Token implements \JsonSerializable
         }
 
         if (!array_key_exists($name, $catalogs)) {
-            throw new \OutOfBoundsException(sprintf('There is no service named "%s" for catalog "%s"', $name, $type));
+            throw new TokenException(sprintf('There is no service named "%s" for catalog "%s"', $name, $type));
         }
 
         return $catalogs[$name];
@@ -117,21 +119,21 @@ class Token implements \JsonSerializable
      *
      * @param array $content
      *
-     * @throws \InvalidArgumentException
+     * @throws TokenException
      *
      * @return static
      */
     public static function create(array $content)
     {
-        $access  = static::arrayGet($content, 'access');
-        $token   = static::arrayGet($access, 'token');
+        $access = static::arrayGet($content, 'access');
+        $token = static::arrayGet($access, 'token');
         $tokenid = static::arrayGet($token, 'id');
         $expires = static::arrayGet($token, 'expires');
 
         try {
             $expireDate = new \DateTime($expires);
         } catch (\Exception $e) {
-            throw new \InvalidArgumentException(sprintf('Invalid expiration date: %s', $e->getMessage()), null, $e);
+            throw new TokenException(sprintf('Invalid expiration date: %s', $e->getMessage()), null, $e);
         }
 
         $token = new static($tokenid, $expireDate);
@@ -139,12 +141,12 @@ class Token implements \JsonSerializable
         $catalogs = static::arrayGet($access, 'serviceCatalog');
         if (is_array($catalogs)) {
             foreach ($catalogs as $catalog) {
-                $type      = static::arrayGet($catalog, 'type');
-                $name      = static::arrayGet($catalog, 'name');
+                $type = static::arrayGet($catalog, 'type');
+                $name = static::arrayGet($catalog, 'name');
                 $endpoints = static::arrayGet($catalog, 'endpoints');
 
                 if (!is_array($endpoints)) {
-                    throw new \InvalidArgumentException(sprintf('Invalid endpoints: %s', json_encode($endpoints)));
+                    throw new TokenException(sprintf('Invalid endpoints: %s', json_encode($endpoints)));
                 }
 
                 $token->addServiceCatalog($type, $name, $endpoints);
@@ -163,7 +165,7 @@ class Token implements \JsonSerializable
             'access' => [
                 'token' => [
                     'id' => $this->id,
-                    'expires' => $this->expires->format(DATE_ISO8601)
+                    'expires' => $this->expires->format(DATE_ISO8601),
                 ],
                 'serviceCatalog' => [],
             ],
@@ -172,8 +174,8 @@ class Token implements \JsonSerializable
         foreach ($this->catalogs as $type => $catalogs) {
             foreach ($catalogs as $name => $endpoints) {
                 $response['access']['serviceCatalog'][] = [
-                    'name'      => $name,
-                    'type'      => $type,
+                    'name' => $name,
+                    'type' => $type,
                     'endpoints' => $endpoints,
                 ];
             }
@@ -190,11 +192,11 @@ class Token implements \JsonSerializable
      */
     protected static function arrayGet(array $array, $key)
     {
-        $key   = strtolower($key);
+        $key = strtolower($key);
         $array = array_change_key_case($array, CASE_LOWER);
 
         if (!array_key_exists($key, $array)) {
-            throw new \InvalidArgumentException(
+            throw new TokenException(
                 sprintf('Did not find key %s in array: %s', json_encode($key), json_encode($array))
             );
         }

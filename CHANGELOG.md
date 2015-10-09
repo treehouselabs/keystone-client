@@ -1,6 +1,21 @@
 CHANGELOG
 =========
 
+## 3.0.0 (unreleased)
+
+### Changes
+* Upgraded Guzzle to v6 (now uses PSR7)
+
+### BC breaks
+
+* PHP version requirement bumped to 5.6
+* Guzzle version requirement bumped to 6.0
+
+
+## 2.1.0
+
+* Added lazy loading client
+
 ## 2.0.0
 
 * Upgraded Guzzle to v5

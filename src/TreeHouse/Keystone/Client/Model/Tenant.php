@@ -44,12 +44,12 @@ class Tenant
      */
     public function __construct($tokenUrl, $username, $password, $serviceType, $serviceName = null, $tenantName = null)
     {
-        $this->tokenUrl    = $tokenUrl;
-        $this->username    = $username;
-        $this->password    = $password;
+        $this->tokenUrl = $tokenUrl;
+        $this->username = $username;
+        $this->password = $password;
         $this->serviceType = $serviceType;
         $this->serviceName = $serviceName;
-        $this->tenantName  = $tenantName;
+        $this->tenantName = $tenantName;
     }
 
     /**

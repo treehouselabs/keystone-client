@@ -1,17 +1,19 @@
 Keystone Client
 ===============
 
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-travis]][link-travis]
+[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
+[![Quality Score][ico-code-quality]][link-code-quality]
+
 A client to use when communicating with Keystone services. Uses Guzzle as the
 actual HTTP client library.
-
-[![Build Status](https://travis-ci.org/treehouselabs/keystone-client.svg)](https://travis-ci.org/treehouselabs/keystone-client)
-[![Code Coverage](https://scrutinizer-ci.com/g/treehouselabs/keystone-client/badges/coverage.png)](https://scrutinizer-ci.com/g/treehouselabs/keystone-client/)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/treehouselabs/keystone-client/badges/quality-score.png)](https://scrutinizer-ci.com/g/treehouselabs/keystone-client/)
 
 ## Installation
 
 ```sh
-composer require treehouselabs/keystone-client:~2.0
+composer require treehouselabs/keystone-client:~3.0
 ```
 
 ## Usage
@@ -89,3 +91,42 @@ creates a client (and thereby requesting a token) when a call is actually made.
 
 [KeystoneClient]:  /src/TreeHouse/Client/KeystoneClient.php
 [ClientInterface]: https://github.com/guzzle/guzzle/blob/master/src/ClientInterface.php
+
+
+## Testing
+
+``` bash
+composer test
+```
+
+
+## Security
+
+If you discover any security related issues, please email peter@treehouse.nl instead of using the issue tracker.
+
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+
+## Credits
+
+- [Peter Kruithof][link-author]
+- [All Contributors][link-contributors]
+
+
+[ico-version]: https://img.shields.io/packagist/v/treehouselabs/keystone-client.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/treehouselabs/keystone-client/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/treehouselabs/keystone-client.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/treehouselabs/keystone-client.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/treehouselabs/keystone-client.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/treehouselabs/keystone-client
+[link-travis]: https://travis-ci.org/treehouselabs/keystone-client
+[link-scrutinizer]: https://scrutinizer-ci.com/g/treehouselabs/keystone-client/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/treehouselabs/keystone-client
+[link-downloads]: https://packagist.org/packages/treehouselabs/keystone-client
+[link-author]: https://github.com/treehouselabs
+[link-contributors]: ../../contributors

@@ -6,27 +6,33 @@ use TreeHouse\Keystone\Client\Model\Token;
 
 class TokenTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstruction()
+    /**
+     * @test
+     */
+    public function it_can_be_constructed()
     {
-        $id      = uniqid();
+        $id = uniqid();
         $expires = new \DateTime('+ 1 minute');
-        $token   = new Token($id, $expires);
+        $token = new Token($id, $expires);
 
         $this->assertInstanceOf(Token::class, $token);
         $this->assertEquals($id, $token->getId());
         $this->assertEquals($expires, $token->getExpirationDate());
     }
 
-    public function testServiceCatalog()
+    /**
+     * @test
+     */
+    public function it_has_a_service_catalog()
     {
-        $type      = 'compute';
-        $name      = 'api';
+        $type = 'compute';
+        $name = 'api';
         $endpoint1 = [
-            'adminurl'  => 'https://admin.example.org',
+            'adminurl' => 'https://admin.example.org',
             'publicurl' => 'https://example.org',
         ];
         $endpoint2 = [
-            'adminurl'  => 'https://admin.example.org',
+            'adminurl' => 'https://admin.example.org',
             'publicurl' => 'https://example.org',
         ];
 
@@ -39,15 +45,21 @@ class TokenTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$endpoint2], $token->getServiceCatalog($type, 'test'));
     }
 
-    public function testExpiredToken()
+    /**
+     * @test
+     */
+    public function it_can_expire()
     {
         $expires = new \DateTime('- 1 minute');
-        $token   = new Token(uniqid(), $expires);
+        $token = new Token(uniqid(), $expires);
 
         $this->assertTrue($token->isExpired());
     }
 
-    public function testSerialization()
+    /**
+     * @test
+     */
+    public function it_can_be_serialized()
     {
         $token = new Token(uniqid(), new \DateTime('+ 1 minute'));
         $token->addServiceCatalog('compute', 'test', [['adminurl' => 'https://admin.example.org', 'publicurl' => 'https://example.org']]);
@@ -62,27 +74,30 @@ class TokenTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($token->getServiceCatalog('compute'), $unserialized->getServiceCatalog('compute'));
     }
 
-    public function testFactoryMethod()
+    /**
+     * @test
+     */
+    public function it_can_be_constructed_using_a_factory()
     {
-        $id       = uniqid();
-        $expires  = new \DateTime('+ 1 minute');
-        $type     = 'compute';
-        $name     = 'api';
+        $id = uniqid();
+        $expires = new \DateTime('+ 1 minute');
+        $type = 'compute';
+        $name = 'api';
         $endpoint = [
-            'adminurl'  => 'https://admin.example.org',
+            'adminurl' => 'https://admin.example.org',
             'publicurl' => 'https://example.org',
         ];
 
         $content = [
             'access' => [
-                'token'          => [
-                    'id'      => $id,
+                'token' => [
+                    'id' => $id,
                     'expires' => $expires->format(DATE_ISO8601),
                 ],
                 'servicecatalog' => [
                     [
-                        'name'      => $name,
-                        'type'      => $type,
+                        'name' => $name,
+                        'type' => $type,
                         'endpoints' => [$endpoint],
                     ],
                 ],
@@ -98,10 +113,13 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
      * @@dataProvider     invalidFactoryMethodDataProvider
-     * @expectedException \InvalidArgumentException
+     * @expectedException \TreeHouse\Keystone\Client\Exception\TokenException
+     *
+     * @param array $content
      */
-    public function testInvalidFactoryMethod(array $content)
+    public function it_cannot_be_constructed_with_invalid_arguments(array $content)
     {
         Token::create($content);
     }
@@ -133,8 +151,8 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // no service catalog
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                     ],
@@ -144,8 +162,8 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // empty service catalog
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                         'servicecatalog' => [
@@ -158,8 +176,8 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // invalid 'expires' value
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => 'asdfasdf',
                         ],
                     ],
@@ -169,14 +187,14 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // no endpoints in catalog
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                         'servicecatalog' => [
                             [
-                                'name'      => 'test',
-                                'type'      => 'compute',
+                                'name' => 'test',
+                                'type' => 'compute',
                                 'endpoints' => null,
                             ],
                         ],
@@ -187,14 +205,14 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // invalid endpoint structure
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                         'servicecatalog' => [
                             [
-                                'name'      => 'test',
-                                'type'      => 'compute',
+                                'name' => 'test',
+                                'type' => 'compute',
                                 'endpoints' => 'http://example.org',
                             ],
                         ],
@@ -205,17 +223,17 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // invalid endpoint structure (2)
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                         'servicecatalog' => [
                             [
-                                'name'      => 'test',
-                                'type'      => 'compute',
+                                'name' => 'test',
+                                'type' => 'compute',
                                 'endpoints' => [
                                     'http://example.org',
-                                ]
+                                ],
                             ],
                         ],
                     ],
@@ -225,16 +243,16 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // missing endpoint url
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                         'servicecatalog' => [
                             [
-                                'name'      => 'test',
-                                'type'      => 'compute',
+                                'name' => 'test',
+                                'type' => 'compute',
                                 'endpoints' => [
-                                    ['foo' => 'bar',]
+                                    ['foo' => 'bar'],
                                 ],
                             ],
                         ],
@@ -245,15 +263,15 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // missing endpoint type
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                         'servicecatalog' => [
                             [
-                                'name'      => 'test',
+                                'name' => 'test',
                                 'endpoints' => [
-                                    ['adminurl' => 'http://example.org',]
+                                    ['adminurl' => 'http://example.org'],
                                 ],
                             ],
                         ],
@@ -264,15 +282,15 @@ class TokenTest extends \PHPUnit_Framework_TestCase
                 // missing endpoint name
                 [
                     'access' => [
-                        'token'          => [
-                            'id'      => 1234,
+                        'token' => [
+                            'id' => 1234,
                             'expires' => '2014-07-25T10:32:05+0000',
                         ],
                         'servicecatalog' => [
                             [
-                                'type'      => 'compute',
+                                'type' => 'compute',
                                 'endpoints' => [
-                                    ['adminurl' => 'http://example.org',]
+                                    ['adminurl' => 'http://example.org'],
                                 ],
                             ],
                         ],
@@ -283,9 +301,10 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \OutOfBoundsException
+     * @test
+     * @expectedException \TreeHouse\Keystone\Client\Exception\TokenException
      */
-    public function testUndefinedServiceCatalogType()
+    public function it_throws_exception_on_undefined_service_catalog_type()
     {
         $token = new Token(uniqid(), new \DateTime('+ 1 minute'));
         $token->addServiceCatalog('compute', 'test', [['adminurl' => 'https://admin.example.org', 'publicurl' => 'https://example.org']]);
@@ -294,9 +313,10 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \OutOfBoundsException
+     * @test
+     * @expectedException \TreeHouse\Keystone\Client\Exception\TokenException
      */
-    public function testUndefinedServiceCatalogName()
+    public function it_throws_exception_on_undefined_service_catalog_name()
     {
         $token = new Token(uniqid(), new \DateTime('+ 1 minute'));
         $token->addServiceCatalog('compute', 'test', [['adminurl' => 'https://admin.example.org', 'publicurl' => 'https://example.org']]);

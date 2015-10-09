@@ -3,9 +3,8 @@
 namespace TreeHouse\Keystone\Tests;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Event\Emitter;
-use GuzzleHttp\Message\Request;
-use GuzzleHttp\Message\Response;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use TreeHouse\Keystone\Client\ClientFactory;
 use TreeHouse\Keystone\Client\KeystoneClient;
 use TreeHouse\Keystone\Client\Model\Tenant;
@@ -28,23 +27,29 @@ class KeystoneClientTest extends \PHPUnit_Framework_TestCase
      */
     protected $client;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $url         = 'http://example.org';
-        $user        = 'username';
-        $pass        = 'password';
+        $url = 'http://example.org';
+        $user = 'username';
+        $pass = 'password';
         $serviceType = 'object-store';
         $serviceName = 'cdn';
 
         $this->tenant = new Tenant($url, $user, $pass, $serviceType, $serviceName);
 
-        $this->client  = $this->getMockForAbstractClass(ClientInterface::class);
+        $this->client = $this->getMockForAbstractClass(ClientInterface::class);
     }
 
-    public function testConstructor()
+    /**
+     * @test
+     */
+    public function it_can_be_constructed()
     {
         $config = ['foo' => 'bar'];
-        $class  = ClientInterface::class;
+        $class = ClientInterface::class;
 
         $factory = $this->getFactoryMock();
         $factory
@@ -59,51 +64,59 @@ class KeystoneClientTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(KeystoneClient::class, $client);
 
         // now call something that gets the actual client
-        $client->createRequest('/foo', []);
+        $client->request('GET', '/foo');
 
         // two calls should only create 1 actual client
-        $client->createRequest('/bar', []);
-    }
-
-    public function testCreateRequest()
-    {
-        $keystoneClient = new KeystoneClient($this->getFactoryMock($this->client), $this->tenant);
-
-        $response = new Response(200);
-        $this->client
-            ->expects($this->once())
-            ->method('createRequest')
-            ->with('get', '/foo', [])
-            ->willReturn($response)
-        ;
-
-        $this->assertSame($response, $keystoneClient->createRequest('get', '/foo', []));
-    }
-
-    public function testSendRequest()
-    {
-        $keystoneClient = new KeystoneClient($this->getFactoryMock($this->client), $this->tenant);
-
-        $request  = new Request('get', 'foo');
-        $response = new Response(200);
-        $this->client
-            ->expects($this->once())
-            ->method('send')
-            ->with($request)
-            ->willReturn($response)
-        ;
-
-        $this->assertSame($response, $keystoneClient->send($request));
+        $client->request('GET', '/bar');
     }
 
     /**
-     * @dataProvider httpMethodDataProvider
+     * @test
+     * @dataProvider sendMethodDataProvider
      *
-     * @param       $method
-     * @param       $url
-     * @param array $options
+     * @param string $method
+     * @param string $httpMethod
+     * @param string $uri
+     * @param array  $headers
      */
-    public function testHttpMethods($method, $url, array $options = [])
+    public function it_can_relay_send_methods($method, $httpMethod, $uri, $headers)
+    {
+        $options = ['foo' => 'bar'];
+        $request = new Request($httpMethod, $uri, $headers);
+        $keystoneClient = new KeystoneClient($this->getFactoryMock($this->client), $this->tenant);
+
+        $response = new Response(200);
+        $this->client
+            ->expects($this->once())
+            ->method($method)
+            ->with($request, $options)
+            ->willReturn($response)
+        ;
+
+        $this->assertSame($response, $keystoneClient->$method($request, $options));
+    }
+
+    /**
+     * @return array
+     */
+    public function sendMethodDataProvider()
+    {
+        return [
+            ['send',      'GET', '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
+            ['sendAsync', 'GET', '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider requestMethodDataProvider
+     *
+     * @param string $method
+     * @param string $httpMethod
+     * @param string $uri
+     * @param array  $options
+     */
+    public function it_can_relay_request_methods($method, $httpMethod, $uri, $options)
     {
         $keystoneClient = new KeystoneClient($this->getFactoryMock($this->client), $this->tenant);
 
@@ -111,73 +124,39 @@ class KeystoneClientTest extends \PHPUnit_Framework_TestCase
         $this->client
             ->expects($this->once())
             ->method($method)
-            ->with($url, $options)
+            ->with($httpMethod, $uri, $options)
             ->willReturn($response)
         ;
 
-        $this->assertSame($response, $keystoneClient->$method($url, $options));
+        $this->assertSame($response, $keystoneClient->$method($httpMethod, $uri, $options));
     }
 
-    public function httpMethodDataProvider()
+    public function requestMethodDataProvider()
     {
         return [
-            ['head',    '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
-            ['get',     '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
-            ['put',     '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
-            ['post',    '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
-            ['patch',   '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
-            ['delete',  '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
-            ['options', '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
+            ['request',      'GET', '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
+            ['requestAsync', 'GET', '/foo', ['headers' => ['Content-Type' => 'text/plain']]],
         ];
     }
 
-    public function testDefaultOptions()
+    /**
+     * @test
+     */
+    public function it_can_relay_config_method()
     {
         $keystoneClient = new KeystoneClient($this->getFactoryMock($this->client), $this->tenant);
 
-        $this->client
-            ->expects($this->once())
-            ->method('setDefaultOption')
-            ->with('foo', 'bar')
-        ;
+        $name = 'foo';
+        $value = 'bar';
 
         $this->client
             ->expects($this->once())
-            ->method('getDefaultOption')
-            ->with('foo')
-            ->willReturn('bar')
+            ->method('getConfig')
+            ->with($name)
+            ->willReturn($value)
         ;
 
-        $keystoneClient->setDefaultOption('foo', 'bar');
-        $this->assertSame('bar', $keystoneClient->getDefaultOption('foo'));
-    }
-
-    public function testGetEmitter()
-    {
-        $keystoneClient = new KeystoneClient($this->getFactoryMock($this->client), $this->tenant);
-        $emitter = new Emitter();
-
-        $this->client
-            ->expects($this->once())
-            ->method('getEmitter')
-            ->willReturn($emitter)
-        ;
-
-        $this->assertSame($emitter, $keystoneClient->getEmitter());
-    }
-
-    public function testGetBaseUrl()
-    {
-        $keystoneClient = new KeystoneClient($this->getFactoryMock($this->client), $this->tenant);
-        $url = 'http://example.org';
-
-        $this->client
-            ->expects($this->once())
-            ->method('getBaseUrl')
-            ->willReturn($url)
-        ;
-
-        $this->assertSame($url, $keystoneClient->getBaseUrl());
+        $this->assertSame($value, $keystoneClient->getConfig($name));
     }
 
     /**
