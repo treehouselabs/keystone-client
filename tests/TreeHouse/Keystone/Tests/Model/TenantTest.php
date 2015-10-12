@@ -9,34 +9,37 @@ class TenantTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    protected $tokenUrl = 'http://example.org/tokens';
+    private $tokenUrl = 'http://example.org/tokens';
 
     /**
      * @var string
      */
-    protected $username = 'admin';
+    private $username = 'admin';
 
     /**
      * @var string
      */
-    protected $password = '1234';
+    private $password = '1234';
 
     /**
      * @var string
      */
-    protected $serviceType = 'object-store';
+    private $serviceType = 'object-store';
 
     /**
      * @var string
      */
-    protected $serviceName = 'cdn';
+    private $serviceName = 'cdn';
 
     /**
      * @var string
      */
-    protected $tenantName = 'treehouse';
+    private $tenantName = 'treehouse';
 
-    public function testConstruction()
+    /**
+     * @test
+     */
+    public function it_can_be_constructed()
     {
         $tenant = new Tenant($this->tokenUrl, $this->username, $this->password, $this->serviceType, $this->serviceName, $this->tenantName);
 

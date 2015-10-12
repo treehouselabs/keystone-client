@@ -1,23 +1,33 @@
+# use Docker infrastructure
 sudo: false
-language: php
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+language: php
 php:
-  - 5.5
   - 5.6
   - 7.0
   - hhvm
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - php: 7.0
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+install:
+  - ~/.nvm/nvm.sh install v4.1.2
+  - composer update --no-interaction --prefer-source
 
 before_script:
-  - travis_retry composer selfupdate
-  - travis_retry composer install --no-interaction --prefer-source
+  - ~/.nvm/nvm.sh run v4.1.2
+  - node tests/TreeHouse/Keystone/Test/server.js &> /dev/null &
 
 script:
-  - ./vendor/bin/phpunit --coverage-clover=coverage.clover
+  - ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 after_script:
-  - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover; fi;
+  - if [[ $TRAVIS_PHP_VERSION == '5.6' ]]; then php vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover; fi

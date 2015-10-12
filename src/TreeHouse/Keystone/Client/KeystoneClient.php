@@ -3,7 +3,7 @@
 namespace TreeHouse\Keystone\Client;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 use TreeHouse\Keystone\Client\Model\Tenant;
 
 /**
@@ -11,6 +11,8 @@ use TreeHouse\Keystone\Client\Model\Tenant;
  *
  * This is useful when you want to inject a client without directly requesting
  * a new token.
+ *
+ * @deprecated Probably no longer necessary in v3. Check this first.
  */
 class KeystoneClient implements ClientInterface
 {
@@ -48,113 +50,49 @@ class KeystoneClient implements ClientInterface
     public function __construct(ClientFactory $factory, Tenant $tenant, array $config = [], $class = null)
     {
         $this->factory = $factory;
-        $this->tenant  = $tenant;
-        $this->config  = $config;
-        $this->class   = $class;
+        $this->tenant = $tenant;
+        $this->config = $config;
+        $this->class = $class;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function createRequest($method, $url = null, array $options = [])
+    public function send(RequestInterface $request, array $options = [])
     {
-        return $this->getActualClient()->createRequest($method, $url, $options);
+        return $this->getActualClient()->send($request, $options);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function get($url = null, $options = [])
+    public function sendAsync(RequestInterface $request, array $options = [])
     {
-        return $this->getActualClient()->get($url, $options);
+        return $this->getActualClient()->sendAsync($request, $options);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function head($url = null, array $options = [])
+    public function request($method, $uri, array $options = [])
     {
-        return $this->getActualClient()->head($url, $options);
+        return $this->getActualClient()->request($method, $uri, $options);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function delete($url = null, array $options = [])
+    public function requestAsync($method, $uri, array $options = [])
     {
-        return $this->getActualClient()->delete($url, $options);
+        return $this->getActualClient()->requestAsync($method, $uri, $options);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function put($url = null, array $options = [])
+    public function getConfig($option = null)
     {
-        return $this->getActualClient()->put($url, $options);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function patch($url = null, array $options = [])
-    {
-        return $this->getActualClient()->patch($url, $options);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function post($url = null, array $options = [])
-    {
-        return $this->getActualClient()->post($url, $options);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function options($url = null, array $options = [])
-    {
-        return $this->getActualClient()->options($url, $options);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function send(RequestInterface $request)
-    {
-        return $this->getActualClient()->send($request);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDefaultOption($keyOrPath = null)
-    {
-        return $this->getActualClient()->getDefaultOption($keyOrPath);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setDefaultOption($keyOrPath, $value)
-    {
-        $this->getActualClient()->setDefaultOption($keyOrPath, $value);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getBaseUrl()
-    {
-        return $this->getActualClient()->getBaseUrl();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getEmitter()
-    {
-        return $this->getActualClient()->getEmitter();
+        return $this->getActualClient()->getConfig($option);
     }
 
     /**
