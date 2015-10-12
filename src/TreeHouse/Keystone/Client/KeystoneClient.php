@@ -11,6 +11,8 @@ use TreeHouse\Keystone\Client\Model\Tenant;
  *
  * This is useful when you want to inject a client without directly requesting
  * a new token.
+ *
+ * @deprecated Probably no longer necessary in v3. Check this first.
  */
 class KeystoneClient implements ClientInterface
 {

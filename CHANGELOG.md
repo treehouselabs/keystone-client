@@ -4,13 +4,23 @@ CHANGELOG
 ## 3.0.0 (unreleased)
 
 ### Changes
+
 * Upgraded Guzzle to v6 (now uses PSR7)
+  * Since Guzzle replaced its events mechanism in favour of middleware, the
+    keystone client factory has been refactored to accomodate this.
+  * The client no longer has to pre-fetch the token on construction due to the
+    changes in Guzzle. This probably means we can deprecate the lazy
+    [`KeystoneClient`](/src/TreeHouse/Keystone/Client/KeystoneClient.php) class.
 
 ### BC breaks
 
 * PHP version requirement bumped to 5.6
 * Guzzle version requirement bumped to 6.0
-
+* The JIT request signing implementation has changed from a event subscriber to
+  middleware. If you extended the `KeystoneTokenSubscriber` you will need to
+  refactor your code.
+* The Token class now only throws `TokenException` instances, instead of
+  `\InvalidArgumentException` and `\OutOfBoundsException`.
 
 ## 2.1.0
 
