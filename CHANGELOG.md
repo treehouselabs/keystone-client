@@ -9,8 +9,8 @@ CHANGELOG
   * Since Guzzle replaced its events mechanism in favour of middleware, the
     keystone client factory has been refactored to accomodate this.
   * The client no longer has to pre-fetch the token on construction due to the
-    changes in Guzzle. This probably means we can deprecate the lazy
-    [`KeystoneClient`](/src/TreeHouse/Keystone/Client/KeystoneClient.php) class.
+    changes in Guzzle. Which means the lazy [`KeystoneClient`](/src/TreeHouse/Keystone/Client/KeystoneClient.php)
+    class has been removed. A regular Guzzle client is now used.
 
 ### BC breaks
 
