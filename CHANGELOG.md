@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+## 3.1.0
+
+### Changes
+
+* Added token pool to Guzzle client config
+
+
 ## 3.0.0
 
 ### Changes
