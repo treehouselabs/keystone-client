@@ -82,6 +82,9 @@ class ClientFactory
         $stack->before('http_errors', Middleware::signRequest($signer), 'signer');
         $stack->before('http_errors', Middleware::reauthenticate($signer), 'reauth');
 
-        return new $class(array_merge($config, ['handler' => $stack]));
+        return new $class(array_merge($config, [
+            'handler' => $stack,
+            'token_pool' => $pool,
+        ]));
     }
 }

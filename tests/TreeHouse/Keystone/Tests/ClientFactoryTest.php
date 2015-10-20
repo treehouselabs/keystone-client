@@ -8,6 +8,7 @@ use TreeHouse\Cache\CacheInterface;
 use TreeHouse\Keystone\Client\ClientFactory;
 use TreeHouse\Keystone\Client\Model\Tenant;
 use TreeHouse\Keystone\Client\Model\Token;
+use TreeHouse\Keystone\Client\TokenPool;
 
 class ClientFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -82,6 +83,19 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
 
         $client = $factory->createClient($this->tenant, ['foo' => 'bar']);
         $this->assertEquals('bar', $client->getConfig('foo'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_stores_the_token_pool_in_the_config()
+    {
+        $factory = new ClientFactory($this->getCacheMock());
+
+        $client = $factory->createClient($this->tenant);
+        $pool = $client->getConfig('token_pool');
+
+        $this->assertInstanceOf(TokenPool::class, $pool);
     }
 
     /**
