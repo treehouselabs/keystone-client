@@ -54,6 +54,6 @@ class RequestSignerTest extends \PHPUnit_Framework_TestCase
         $pool->expects($this->once())->method('getToken')->willThrowException(new TokenException());
 
         $signer = new RequestSigner($pool);
-        $signer->signRequest(new Request('GET', 'foo'));
+        $signer->signRequest(new Request('GET', 'foo'), true);
     }
 }
