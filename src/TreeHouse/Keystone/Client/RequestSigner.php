@@ -35,8 +35,11 @@ class RequestSigner implements LoggerAwareInterface
     public function signRequest(RequestInterface $request, $forceNew = false)
     {
         try {
-            // fetch token, optionally force a new one
-            $this->pool->getToken($forceNew);
+            // force-get a new token if it was requested, if not, the regular
+            // caching mechanism will be used so the call is not necessary here.
+            if (true === $forceNew) {
+                $this->pool->getToken($forceNew);
+            }
 
             // create a new request with the new uri and the token added to the headers
             $uri = Uri::resolve(
