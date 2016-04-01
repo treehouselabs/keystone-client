@@ -8,6 +8,27 @@ CHANGELOG
 * Added token pool to Guzzle client config
 
 
+## 3.2.0
+
+### Changes
+
+* Updated cache constraint
+
+
+## 3.1.1
+
+### Fixes
+
+* Fixed redundant calls to get token
+
+
+## 3.1.0
+
+### Changes
+
+* Added token pool to Guzzle client config
+
+
 ## 3.0.0
 
 ### Changes
