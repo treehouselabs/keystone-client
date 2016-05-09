@@ -15,6 +15,8 @@ use TreeHouse\Keystone\Client\Model\Token;
 
 class TokenPool
 {
+    const TOKEN_KEY_FORMAT = 'keystone_token_3_%s';
+
     /**
      * @var Tenant
      */
@@ -204,6 +206,6 @@ class TokenPool
      */
     private function getCacheKey()
     {
-        return sprintf('keystone_token_%s', rawurlencode($this->tenant->getTokenUrl()));
+        return sprintf(self::TOKEN_KEY_FORMAT, rawurlencode($this->tenant->getTokenUrl()));
     }
 }

@@ -11,6 +11,7 @@ use TreeHouse\Cache\Driver\ArrayDriver;
 use TreeHouse\Cache\Serializer\JsonSerializer;
 use TreeHouse\Keystone\Client\ClientFactory;
 use TreeHouse\Keystone\Client\Model\Tenant;
+use TreeHouse\Keystone\Client\TokenPool;
 use TreeHouse\Keystone\Test\Server;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
@@ -171,7 +172,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     private function getTokenKey()
     {
-        return sprintf('keystone_token_%s', rawurlencode($this->url));
+        return sprintf(TokenPool::TOKEN_KEY_FORMAT, rawurlencode($this->url));
     }
 
     /**
