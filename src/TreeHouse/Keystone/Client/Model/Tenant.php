@@ -57,7 +57,7 @@ class Tenant
         $this->serviceType = $serviceType;
         $this->serviceName = $serviceName;
         $this->tenantName = $tenantName;
-        $this->serviceEndpoint = $serviceEndpoint;
+        $this->serviceEndpoint = ($serviceEndpoint !== null) ? $serviceEndpoint : 'public';
     }
 
     /**

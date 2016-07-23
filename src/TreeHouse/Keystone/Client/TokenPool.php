@@ -192,13 +192,14 @@ class TokenPool
 
         // use the first endpoint that has a public url
         foreach ($catalog as $endpoint) {
+            $endpointType = $this->tenant->getServiceEndpoint() . 'url';
             $endpoint = array_change_key_case($endpoint, CASE_LOWER);
-            if (array_key_exists('publicurl', $endpoint)) {
-                return $endpoint['publicurl'];
+            if (array_key_exists($endpointType, $endpoint)) {
+                return $endpoint[$endpointType];
             }
         }
 
-        throw new TokenException('No endpoint with a public url found');
+        throw new TokenException('No endpoint with a ' . $this->tenant->getServiceEndpoint() . ' url found');
     }
 
     /**
