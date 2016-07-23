@@ -37,11 +37,17 @@ class TenantTest extends \PHPUnit_Framework_TestCase
     private $tenantName = 'treehouse';
 
     /**
+     * @var string
+     */
+    private $serviceEndpoint = 'admin';
+
+    /**
      * @test
      */
     public function it_can_be_constructed()
     {
-        $tenant = new Tenant($this->tokenUrl, $this->username, $this->password, $this->serviceType, $this->serviceName, $this->tenantName);
+        $tenant = new Tenant($this->tokenUrl, $this->username, $this->password, $this->serviceType, $this->serviceName, $this->tenantName,
+                             $this->serviceEndpoint);
 
         $this->assertInstanceOf(Tenant::class, $tenant);
         $this->assertEquals($this->tokenUrl, $tenant->getTokenUrl());
@@ -50,5 +56,6 @@ class TenantTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->serviceType, $tenant->getServiceType());
         $this->assertEquals($this->serviceName, $tenant->getServiceName());
         $this->assertEquals($this->tenantName, $tenant->getTenantName());
+        $this->assertEquals($this->serviceEndpoint, $tenant->getServiceEndpoint());
     }
 }
