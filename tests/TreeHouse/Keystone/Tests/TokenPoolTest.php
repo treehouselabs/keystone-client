@@ -31,7 +31,7 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    private $publicUrl = 'http://example.org';
+    private $endpointUrl = 'http://example.org';
 
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
     {
         $this->tenant = new Tenant('http://example.org', 'user', 'p@$$', 'compute');
         $this->token = new Token('abcd1234', new \DateTime('+1 hour'));
-        $this->token->addServiceCatalog('compute', 'api', [['publicurl' => $this->publicUrl]]);
+        $this->token->addServiceCatalog('compute', 'api', [['publicurl' => $this->endpointUrl]]);
 
         $this->cache = $this
             ->getMockBuilder(CacheInterface::class)
@@ -75,7 +75,7 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($this->token, $this->pool->getToken());
         $this->assertSame($this->token->getId(), $this->pool->getTokenId());
-        $this->assertSame($this->publicUrl, $this->pool->getPublicUrl());
+        $this->assertSame($this->endpointUrl, $this->pool->getEndpointUrl());
     }
 
     /**
@@ -88,7 +88,7 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($this->token, $this->pool->getToken());
         $this->assertEquals($this->token->getId(), $this->pool->getTokenId());
-        $this->assertEquals($this->publicUrl, $this->pool->getPublicUrl());
+        $this->assertEquals($this->endpointUrl, $this->pool->getEndpointUrl());
     }
 
     /**
@@ -113,7 +113,7 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($this->token, $this->pool->getToken());
         $this->assertSame($this->token->getId(), $this->pool->getTokenId());
-        $this->assertSame($this->publicUrl, $this->pool->getPublicUrl());
+        $this->assertSame($this->endpointUrl, $this->pool->getEndpointUrl());
     }
 
     /**
@@ -128,6 +128,6 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($this->token, $this->pool->getToken(true));
         $this->assertSame($this->token->getId(), $this->pool->getTokenId());
-        $this->assertSame($this->publicUrl, $this->pool->getPublicUrl());
+        $this->assertSame($this->endpointUrl, $this->pool->getEndpointUrl());
     }
 }

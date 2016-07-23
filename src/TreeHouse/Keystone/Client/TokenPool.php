@@ -44,11 +44,11 @@ class TokenPool
     protected $client;
 
     /**
-     * The public url that was obtained via the token.
+     * The endpoint url that was obtained via the token.
      *
      * @var string
      */
-    protected $publicUrl;
+    protected $endpointUrl;
 
     /**
      * Cached copy of the token id.
@@ -73,13 +73,13 @@ class TokenPool
     /**
      * @return string
      */
-    public function getPublicUrl()
+    public function getEndpointUrl()
     {
-        if (null === $this->publicUrl) {
+        if (null === $this->endpointUrl) {
             $this->getToken();
         }
 
-        return $this->publicUrl;
+        return $this->endpointUrl;
     }
 
     /**
@@ -120,7 +120,7 @@ class TokenPool
         }
 
         // cache token properties
-        $this->publicUrl = $this->getPublicUrlFromToken($token);
+        $this->endpointUrl = $this->getEndpointUrlFromToken($token);
         $this->tokenId = $token->getId();
 
         return $token;
@@ -186,7 +186,7 @@ class TokenPool
      *
      * @return string
      */
-    private function getPublicUrlFromToken(Token $token)
+    private function getEndpointUrlFromToken(Token $token)
     {
         $catalog = $token->getServiceCatalog($this->tenant->getServiceType(), $this->tenant->getServiceName());
 
