@@ -190,9 +190,9 @@ class TokenPool
     {
         $catalog = $token->getServiceCatalog($this->tenant->getServiceType(), $this->tenant->getServiceName());
 
-        // use the first endpoint that has a public url
+        // use the first endpoint that has was requested
+        $endpointType = $this->tenant->getServiceEndpoint() . 'url';
         foreach ($catalog as $endpoint) {
-            $endpointType = $this->tenant->getServiceEndpoint() . 'url';
             $endpoint = array_change_key_case($endpoint, CASE_LOWER);
             if (array_key_exists($endpointType, $endpoint)) {
                 return $endpoint[$endpointType];
