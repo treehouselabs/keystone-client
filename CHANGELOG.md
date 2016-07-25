@@ -1,11 +1,23 @@
 CHANGELOG
 =========
 
-## 3.1.0
+## 3.2.2
 
 ### Changes
 
-* Added token pool to Guzzle client config
+* Added support to select other endpoint than default
+
+### Deprecations
+
+* The `getPublicUrl()` method in `TokenPool` has been renamed to `getEndpointUrl`,
+  the method will be dropped in v4.0.  
+
+
+## 3.2.1
+
+### Changes
+
+* Bump token key format to prevent BC issue
 
 
 ## 3.2.0
