@@ -71,10 +71,12 @@ class TokenPool
     }
 
     /**
-     * @deprecated Please use getEndpointUrl() in favor of this
+     * @deprecated Please use {@link getEndpointUrl()} in favor of this
+     *
      * @return string
      */
-    public function getPublicUrl() {
+    public function getPublicUrl()
+    {
         return $this->getEndpointUrl();
     }
 
