@@ -46,8 +46,7 @@ class TenantTest extends \PHPUnit_Framework_TestCase
      */
     public function it_can_be_constructed()
     {
-        $tenant = new Tenant($this->tokenUrl, $this->username, $this->password, $this->serviceType, $this->serviceName, $this->tenantName,
-                             $this->serviceEndpoint);
+        $tenant = new Tenant($this->tokenUrl, $this->username, $this->password, $this->serviceType, $this->serviceName, $this->tenantName, $this->serviceEndpoint);
 
         $this->assertInstanceOf(Tenant::class, $tenant);
         $this->assertEquals($this->tokenUrl, $tenant->getTokenUrl());

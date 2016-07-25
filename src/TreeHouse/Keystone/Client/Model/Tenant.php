@@ -48,8 +48,7 @@ class Tenant
      * @param string $tenantName      Tenant name (optional)
      * @param string $serviceEndpoint Service catalog endpoint (defaults to public)
      */
-    public function __construct($tokenUrl, $username, $password, $serviceType, $serviceName = null, $tenantName = null,
-                                $serviceEndpoint = 'public')
+    public function __construct($tokenUrl, $username, $password, $serviceType, $serviceName = null, $tenantName = null, $serviceEndpoint = 'public')
     {
         $this->tokenUrl = $tokenUrl;
         $this->username = $username;
