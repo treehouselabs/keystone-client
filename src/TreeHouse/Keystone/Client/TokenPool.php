@@ -44,11 +44,11 @@ class TokenPool
     protected $client;
 
     /**
-     * The public url that was obtained via the token.
+     * The endpoint url that was obtained via the token.
      *
      * @var string
      */
-    protected $publicUrl;
+    protected $endpointUrl;
 
     /**
      * Cached copy of the token id.
@@ -71,15 +71,23 @@ class TokenPool
     }
 
     /**
+     * @deprecated Please use getEndpointUrl() in favor of this
      * @return string
      */
-    public function getPublicUrl()
+    public function getPublicUrl() {
+        return $this->getEndpointUrl();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndpointUrl()
     {
-        if (null === $this->publicUrl) {
+        if (null === $this->endpointUrl) {
             $this->getToken();
         }
 
-        return $this->publicUrl;
+        return $this->endpointUrl;
     }
 
     /**
@@ -120,7 +128,7 @@ class TokenPool
         }
 
         // cache token properties
-        $this->publicUrl = $this->getPublicUrlFromToken($token);
+        $this->endpointUrl = $this->getEndpointUrlFromToken($token);
         $this->tokenId = $token->getId();
 
         return $token;
@@ -186,19 +194,20 @@ class TokenPool
      *
      * @return string
      */
-    private function getPublicUrlFromToken(Token $token)
+    private function getEndpointUrlFromToken(Token $token)
     {
         $catalog = $token->getServiceCatalog($this->tenant->getServiceType(), $this->tenant->getServiceName());
 
-        // use the first endpoint that has a public url
+        // use the first endpoint that has was requested
+        $endpointType = $this->tenant->getServiceEndpoint() . 'url';
         foreach ($catalog as $endpoint) {
             $endpoint = array_change_key_case($endpoint, CASE_LOWER);
-            if (array_key_exists('publicurl', $endpoint)) {
-                return $endpoint['publicurl'];
+            if (array_key_exists($endpointType, $endpoint)) {
+                return $endpoint[$endpointType];
             }
         }
 
-        throw new TokenException('No endpoint with a public url found');
+        throw new TokenException('No endpoint with a ' . $this->tenant->getServiceEndpoint() . ' url found');
     }
 
     /**

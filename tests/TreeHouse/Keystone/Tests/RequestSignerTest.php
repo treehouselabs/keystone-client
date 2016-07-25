@@ -17,16 +17,16 @@ class RequestSignerTest extends \PHPUnit_Framework_TestCase
         $pool = $this
             ->getMockBuilder(TokenPool::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getToken', 'getPublicUrl', 'getTokenId'])
+            ->setMethods(['getToken', 'getEndpointUrl', 'getTokenId'])
             ->getMock()
         ;
 
         $force = true;
-        $publicUrl = 'http://example.org/v1/';
+        $endpointUrl = 'http://example.org/v1/';
         $tokenId = 'abcd1234';
 
         $pool->expects($this->once())->method('getToken')->with($force);
-        $pool->expects($this->once())->method('getPublicUrl')->willReturn($publicUrl);
+        $pool->expects($this->once())->method('getEndpointUrl')->willReturn($endpointUrl);
         $pool->expects($this->once())->method('getTokenId')->willReturn($tokenId);
 
         $signer = new RequestSigner($pool);
@@ -47,7 +47,7 @@ class RequestSignerTest extends \PHPUnit_Framework_TestCase
         $pool = $this
             ->getMockBuilder(TokenPool::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getToken', 'getPublicUrl', 'getTokenId'])
+            ->setMethods(['getToken', 'getEndpointUrl', 'getTokenId'])
             ->getMock()
         ;
 

@@ -43,7 +43,7 @@ class RequestSigner implements LoggerAwareInterface
 
             // create a new request with the new uri and the token added to the headers
             $uri = Uri::resolve(
-                new Uri($this->pool->getPublicUrl()),
+                new Uri($this->pool->getEndpointUrl()),
                 $request->getUri()
             );
 

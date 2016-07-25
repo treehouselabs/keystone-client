@@ -35,14 +35,20 @@ class Tenant
     protected $tenantName;
 
     /**
-     * @param string $tokenUrl    The url where to obtain a token
-     * @param string $username    Username
-     * @param string $password    Password
-     * @param string $serviceType The type of service
-     * @param string $serviceName Service name. If left empty, the first matching service type will be used.
-     * @param string $tenantName  Tenant name (optional)
+     * @var string
      */
-    public function __construct($tokenUrl, $username, $password, $serviceType, $serviceName = null, $tenantName = null)
+    protected $serviceEndpoint;
+
+    /**
+     * @param string $tokenUrl        The url where to obtain a token
+     * @param string $username        Username
+     * @param string $password        Password
+     * @param string $serviceType     The type of service
+     * @param string $serviceName     Service name. If left empty, the first matching service type will be used.
+     * @param string $tenantName      Tenant name (optional)
+     * @param string $serviceEndpoint Service catalog endpoint (defaults to public)
+     */
+    public function __construct($tokenUrl, $username, $password, $serviceType, $serviceName = null, $tenantName = null, $serviceEndpoint = 'public')
     {
         $this->tokenUrl = $tokenUrl;
         $this->username = $username;
@@ -50,6 +56,7 @@ class Tenant
         $this->serviceType = $serviceType;
         $this->serviceName = $serviceName;
         $this->tenantName = $tenantName;
+        $this->serviceEndpoint = ($serviceEndpoint !== null) ? $serviceEndpoint : 'public';
     }
 
     /**
@@ -98,5 +105,13 @@ class Tenant
     public function getTenantName()
     {
         return $this->tenantName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getServiceEndpoint()
+    {
+        return $this->serviceEndpoint;
     }
 }
