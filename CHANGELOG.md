@@ -1,6 +1,28 @@
 CHANGELOG
 =========
 
+## v4.0.0
+
+### Changes:
+
+* Switched from using treehouselabs/cache to psr/cache (PSR-6)
+
+### Breaking changes:
+
+* The constructor for the `ClientFactory` class has been changed
+  due to the changed cache interface.
+  
+  **Before:**
+    ```php
+    public function __construct(CacheInterface $cache, $class = null, LoggerInterface $logger = null)
+    ```
+  
+    **After:**
+    ```php
+    public function __construct(CacheItemPoolInterface $cache, $class = null, LoggerInterface $logger = null)
+    ```
+
+
 ## 3.1.0
 
 ### Changes
