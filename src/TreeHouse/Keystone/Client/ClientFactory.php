@@ -6,8 +6,8 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
-use TreeHouse\Cache\CacheInterface;
 use TreeHouse\Keystone\Client\Middleware\Middleware;
 use TreeHouse\Keystone\Client\Model\Tenant;
 
@@ -28,7 +28,7 @@ class ClientFactory
     /**
      * The cache where tokens are stored.
      *
-     * @var CacheInterface
+     * @var CacheItemPoolInterface
      */
     protected $cache;
 
@@ -47,11 +47,11 @@ class ClientFactory
     protected $logger;
 
     /**
-     * @param CacheInterface  $cache
+     * @param CacheItemPoolInterface  $cache
      * @param string          $class
      * @param LoggerInterface $logger
      */
-    public function __construct(CacheInterface $cache, $class = null, LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cache, $class = null, LoggerInterface $logger = null)
     {
         $this->cache = $cache;
         $this->clientClass = $class ?: GuzzleClient::class;

@@ -5,10 +5,8 @@ namespace TreeHouse\Keystone\Tests\Functional;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
-use TreeHouse\Cache\Cache;
-use TreeHouse\Cache\CacheInterface;
-use TreeHouse\Cache\Driver\ArrayDriver;
-use TreeHouse\Cache\Serializer\JsonSerializer;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use TreeHouse\Keystone\Client\ClientFactory;
 use TreeHouse\Keystone\Client\Model\Tenant;
 use TreeHouse\Keystone\Client\TokenPool;
@@ -22,7 +20,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     private $tenant;
 
     /**
-     * @var CacheInterface
+     * @var CacheItemPoolInterface
      */
     private $cache;
 
@@ -51,7 +49,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->cache = new Cache(new ArrayDriver(), new JsonSerializer());
+        $this->cache = new ArrayAdapter();
         $this->factory = new ClientFactory($this->cache, Client::class);
         $this->tenant = new Tenant($this->url, 'user', 'p@$$', $this->service);
 
@@ -84,7 +82,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function it_works_with_an_existing_valid_token()
     {
-        $this->cache->set($this->getTokenKey(), $this->getTokenJson());
+        $cacheItem = $this->cache->getItem($this->getTokenKey());
+        $cacheItem->set($this->getTokenJson());
+        $this->cache->save($cacheItem);
+
         $client = $this->factory->createClient($this->tenant);
 
         $body = 'Hello, world!';
@@ -104,7 +105,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function it_reauthenticates_with_an_existing_invalid_token()
     {
-        $this->cache->set($this->getTokenKey(), $this->getTokenJson());
+        $cacheItem = $this->cache->getItem($this->getTokenKey());
+        $cacheItem->set($this->getTokenJson());
+        $this->cache->save($cacheItem);
+
         $client = $this->factory->createClient($this->tenant);
 
         $body = 'Hello, world!';
@@ -126,7 +130,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function it_reauthenticates_with_an_existing_expired_token()
     {
-        $this->cache->set($this->getTokenKey(), $this->getTokenJson());
+        $cacheItem = $this->cache->getItem($this->getTokenKey());
+        $cacheItem->set($this->getTokenJson());
+        $this->cache->save($cacheItem);
+
         $client = $this->factory->createClient($this->tenant);
 
         $body = 'Hello, world!';
@@ -149,7 +156,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function it_fails_with_failed_reathentication()
     {
-        $this->cache->set($this->getTokenKey(), $this->getTokenJson());
+        $cacheItem = $this->cache->getItem($this->getTokenKey());
+        $cacheItem->set($this->getTokenJson());
+        $this->cache->save($cacheItem);
+
         $client = $this->factory->createClient($this->tenant);
 
         Server::enqueue([
