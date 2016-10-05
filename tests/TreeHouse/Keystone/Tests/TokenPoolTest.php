@@ -2,7 +2,9 @@
 
 namespace TreeHouse\Keystone\Tests;
 
-use TreeHouse\Cache\CacheInterface;
+use Prophecy\Argument;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use TreeHouse\Keystone\Client\Model\Tenant;
 use TreeHouse\Keystone\Client\Model\Token;
 use TreeHouse\Keystone\Client\TokenPool;
@@ -10,7 +12,7 @@ use TreeHouse\Keystone\Client\TokenPool;
 class TokenPoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CacheInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|CacheItemPoolInterface
      */
     private $cache;
     /**
@@ -42,16 +44,11 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
         $this->token = new Token('abcd1234', new \DateTime('+1 hour'));
         $this->token->addServiceCatalog('compute', 'api', [['publicurl' => $this->endpointUrl]]);
 
-        $this->cache = $this
-            ->getMockBuilder(CacheInterface::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['get', 'set'])
-            ->getMockForAbstractClass()
-        ;
+        $this->cache = $this->prophesize(CacheItemPoolInterface::class);
 
         $this->pool = $this
             ->getMockBuilder(TokenPool::class)
-            ->setConstructorArgs([$this->tenant, $this->cache])
+            ->setConstructorArgs([$this->tenant, $this->cache->reveal()])
             ->setMethods(['requestToken'])
             ->getMock()
         ;
@@ -63,15 +60,18 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
     public function it_can_request_a_new_token()
     {
         $this->pool->expects($this->once())->method('requestToken')->willReturn($this->token);
-        $this->cache
-            ->expects($this->once())
-            ->method('set')
-            ->with(
-                $this->isType('string'),
-                json_encode($this->token),
-                $this->lessThanOrEqual(3600)
-            )
-        ;
+
+        $cacheItem = $this->prophesize(CacheItemInterface::class);
+        $cacheItem->get()->shouldBeCalled();
+        $cacheItem->set(json_encode($this->token))->shouldBeCalled();
+        $cacheItem->expiresAfter(Argument::that(function($arg) {
+            $this->assertLessThanOrEqual(3600, $arg);
+
+            return true;
+        }))->shouldBeCalled();
+
+        $this->cache->save($cacheItem)->shouldBeCalled();
+        $this->cache->getItem(Argument::type('string'))->willReturn($cacheItem->reveal());
 
         $this->assertSame($this->token, $this->pool->getToken());
         $this->assertSame($this->token->getId(), $this->pool->getTokenId());
@@ -84,7 +84,10 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
     public function it_can_return_a_cached_token()
     {
         $this->pool->expects($this->never())->method('requestToken');
-        $this->cache->expects($this->once())->method('get')->willReturn(json_encode($this->token));
+
+        $cacheItem = $this->prophesize(CacheItemInterface::class);
+        $cacheItem->get()->willReturn(json_encode($this->token));
+        $this->cache->getItem(Argument::type('string'))->willReturn($cacheItem->reveal());
 
         $this->assertEquals($this->token, $this->pool->getToken());
         $this->assertEquals($this->token->getId(), $this->pool->getTokenId());
@@ -97,7 +100,9 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
      */
     public function it_does_not_use_an_invalid_cached_token()
     {
-        $this->cache->expects($this->once())->method('get')->willReturn('[whatever]');
+        $cacheItem = $this->prophesize(CacheItemInterface::class);
+        $cacheItem->get()->willReturn('[whatever]');
+        $this->cache->getItem(Argument::type('string'))->willReturn($cacheItem->reveal());
 
         $this->pool->getToken();
     }
@@ -108,8 +113,15 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
     public function it_does_not_use_an_expired_cached_token()
     {
         $token = new Token('abcd1234', new \DateTime('-1 hour'));
-        $this->cache->expects($this->once())->method('get')->willReturn(json_encode($token));
         $this->pool->expects($this->once())->method('requestToken')->willReturn($this->token);
+
+        $cacheItem = $this->prophesize(CacheItemInterface::class);
+        $cacheItem->get()->willReturn(json_encode($token));
+        $cacheItem->set(json_encode($this->token))->shouldBeCalled();
+        $cacheItem->expiresAfter(Argument::any())->shouldBeCalled();
+
+        $this->cache->save($cacheItem)->shouldBeCalled();
+        $this->cache->getItem(Argument::type('string'))->willReturn($cacheItem->reveal());
 
         $this->assertSame($this->token, $this->pool->getToken());
         $this->assertSame($this->token->getId(), $this->pool->getTokenId());
@@ -123,8 +135,15 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
     {
         $token = new Token('abcd1234', new \DateTime('+1 hour'));
 
-        $this->cache->expects($this->any())->method('get')->willReturn(json_encode($token));
         $this->pool->expects($this->once())->method('requestToken')->willReturn($this->token);
+
+        $cacheItem = $this->prophesize(CacheItemInterface::class);
+        $cacheItem->get()->willReturn(json_encode($token));
+        $cacheItem->set(json_encode($this->token))->shouldBeCalled();
+        $cacheItem->expiresAfter(Argument::any())->shouldBeCalled();
+
+        $this->cache->save($cacheItem)->shouldBeCalled();
+        $this->cache->getItem(Argument::type('string'))->willReturn($cacheItem->reveal());
 
         $this->assertSame($this->token, $this->pool->getToken(true));
         $this->assertSame($this->token->getId(), $this->pool->getTokenId());

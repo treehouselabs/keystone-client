@@ -27,7 +27,7 @@ automatically and the request is retried with the new token.
 
 
 ```php
-use TreeHouse\Cache\CacheInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use TreeHouse\Keystone\Client\ClientFactory;
 use TreeHouse\Keystone\Client\Model\Tenant;
 
@@ -37,7 +37,7 @@ $password     = 's3cr4t';
 $serviceType  = 'compute';
 $serviceName  = 'api';
 
-// $cache is a TreeHouse\Cache\CacheInterface instance
+// $cache is a Psr\Cache\CacheItemPoolInterface instance
 $tenant  = new Tenant($tokenUrl, $username, $password, $serviceType, $serviceName);
 $client  = (new ClientFactory($cache))->createClient($tenant);
 
