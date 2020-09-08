@@ -2,7 +2,7 @@
 
 namespace TreeHouse\Keystone\Tests;
 
-use TreeHouse\Cache\CacheInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use TreeHouse\Keystone\Client\Model\Tenant;
 use TreeHouse\Keystone\Client\Model\Token;
 use TreeHouse\Keystone\Client\TokenPool;
@@ -10,7 +10,7 @@ use TreeHouse\Keystone\Client\TokenPool;
 class TokenPoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CacheInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|CacheItemPoolInterface
      */
     private $cache;
     /**
@@ -43,7 +43,7 @@ class TokenPoolTest extends \PHPUnit_Framework_TestCase
         $this->token->addServiceCatalog('compute', 'api', [['publicurl' => $this->publicUrl]]);
 
         $this->cache = $this
-            ->getMockBuilder(CacheInterface::class)
+            ->getMockBuilder(CacheItemPoolInterface::class)
             ->disableOriginalConstructor()
             ->setMethods(['get', 'set'])
             ->getMockForAbstractClass()
