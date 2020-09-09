@@ -12,12 +12,12 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     public function it_can_be_constructed()
     {
         $id = uniqid();
-        $expires = new \DateTime('+ 1 minute');
+        $expires = new \DateTimeImmutable('+ 1 minute');
         $token = new Token($id, $expires);
 
         $this->assertInstanceOf(Token::class, $token);
         $this->assertEquals($id, $token->getId());
-        $this->assertEquals($expires, $token->getExpirationDate());
+        $this->assertEquals($expires->getTimestamp(), $token->getExpirationDate()->getTimestamp());
     }
 
     /**
@@ -70,7 +70,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
         $unserialized = Token::create(json_decode($serialized, true));
         $this->assertInstanceOf(Token::class, $unserialized);
         $this->assertEquals($token->getId(), $unserialized->getId());
-        $this->assertEquals($token->getExpirationDate(), $unserialized->getExpirationDate());
+        $this->assertEquals($token->getExpirationDate()->getTimestamp(), $unserialized->getExpirationDate()->getTimestamp());
         $this->assertEquals($token->getServiceCatalog('compute'), $unserialized->getServiceCatalog('compute'));
     }
 
@@ -108,7 +108,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(Token::class, $token);
         $this->assertEquals($id, $token->getId());
-        $this->assertEquals($expires, $token->getExpirationDate());
+        $this->assertEquals($expires->getTimestamp(), $token->getExpirationDate()->getTimestamp());
         $this->assertEquals([$endpoint], $token->getServiceCatalog($type, $name));
     }
 

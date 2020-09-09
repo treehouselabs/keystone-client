@@ -4,7 +4,7 @@ namespace TreeHouse\Keystone\Tests;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use TreeHouse\Cache\CacheInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use TreeHouse\Keystone\Client\ClientFactory;
 use TreeHouse\Keystone\Client\Model\Tenant;
 use TreeHouse\Keystone\Client\Model\Token;
@@ -99,12 +99,12 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|CacheInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|CacheItemPoolInterface
      */
     private function getCacheMock()
     {
         return $this
-            ->getMockBuilder(CacheInterface::class)
+            ->getMockBuilder(CacheItemPoolInterface::class)
             ->getMockForAbstractClass()
         ;
     }

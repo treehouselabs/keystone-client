@@ -6,6 +6,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use TreeHouse\Cache\CacheInterface;
 use TreeHouse\Keystone\Client\Middleware\Middleware;
@@ -28,7 +29,7 @@ class ClientFactory
     /**
      * The cache where tokens are stored.
      *
-     * @var CacheInterface
+     * @var CacheItemPoolInterface
      */
     protected $cache;
 
@@ -47,11 +48,11 @@ class ClientFactory
     protected $logger;
 
     /**
-     * @param CacheInterface  $cache
-     * @param string          $class
+     * @param CacheItemPoolInterface $cache
+     * @param string $class
      * @param LoggerInterface $logger
      */
-    public function __construct(CacheInterface $cache, $class = null, LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cache, $class = null, LoggerInterface $logger = null)
     {
         $this->cache = $cache;
         $this->clientClass = $class ?: GuzzleClient::class;
@@ -62,8 +63,8 @@ class ClientFactory
      * Creates a Guzzle client for communicating with a Keystone service.
      *
      * @param Tenant $tenant The keystone tenant to authenticate with
-     * @param array  $config The client configuration
-     * @param string $class  Optionally override the Guzzle client class
+     * @param array $config The client configuration
+     * @param string $class Optionally override the Guzzle client class
      *
      * @throws RequestException When a new token could not be requested.
      *

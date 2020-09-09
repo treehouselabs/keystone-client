@@ -8,7 +8,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use TreeHouse\Cache\CacheInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use TreeHouse\Keystone\Client\Exception\TokenException;
 use TreeHouse\Keystone\Client\Model\Tenant;
 use TreeHouse\Keystone\Client\Model\Token;
@@ -25,7 +25,7 @@ class TokenPool
     /**
      * The cache where tokens are stored.
      *
-     * @var CacheInterface
+     * @var CacheItemPoolInterface
      */
     protected $cache;
 
@@ -59,10 +59,10 @@ class TokenPool
 
     /**
      * @param Tenant          $tenant
-     * @param CacheInterface  $cache
+     * @param CacheItemPoolInterface  $cache
      * @param LoggerInterface $logger
      */
-    public function __construct(Tenant $tenant, CacheInterface $cache, LoggerInterface $logger = null)
+    public function __construct(Tenant $tenant, CacheItemPoolInterface $cache, LoggerInterface $logger = null)
     {
         $this->tenant = $tenant;
         $this->cache = $cache;
@@ -105,9 +105,11 @@ class TokenPool
     public function getToken($forceNew = false)
     {
         $tokenName = $this->getCacheKey();
+        $cacheItem = $this->cache->getItem($tokenName);
+        $cachedToken = $cacheItem->get();
 
         // see if token is in cache
-        if (!$forceNew && $cachedToken = $this->cache->get($tokenName)) {
+        if (!$forceNew && $cachedToken !== null) {
             $this->logger->debug('Obtained token from cache');
             $token = $this->createToken($cachedToken);
         }
@@ -116,7 +118,10 @@ class TokenPool
             // cache the token and set it to expire 5 seconds before the
             // expiration date, to avoid any concurrence errors.
             $token = $this->requestToken();
-            $this->cache->set($tokenName, json_encode($token), $token->getExpirationDate()->getTimestamp() - time() - 5);
+            $cacheItem->set(json_encode($token));
+            $cacheItem->expiresAfter($token->getExpirationDate()->getTimestamp() - time() - 5);
+
+            $this->cache->save($cacheItem);
         }
 
         // cache token properties

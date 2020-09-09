@@ -5,14 +5,12 @@ namespace TreeHouse\Keystone\Tests\Functional;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
-use TreeHouse\Cache\Cache;
-use TreeHouse\Cache\CacheInterface;
-use TreeHouse\Cache\Driver\ArrayDriver;
-use TreeHouse\Cache\Serializer\JsonSerializer;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use TreeHouse\Keystone\Client\ClientFactory;
 use TreeHouse\Keystone\Client\Model\Tenant;
 use TreeHouse\Keystone\Client\TokenPool;
 use TreeHouse\Keystone\Test\Server;
+use Psr\Cache\CacheItemPoolInterface;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +20,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     private $tenant;
 
     /**
-     * @var CacheInterface
+     * @var CacheItemPoolInterface
      */
     private $cache;
 
@@ -51,7 +49,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->cache = new Cache(new ArrayDriver(), new JsonSerializer());
+        $this->cache = new ArrayAdapter();
         $this->factory = new ClientFactory($this->cache, Client::class);
         $this->tenant = new Tenant($this->url, 'user', 'p@$$', $this->service);
 
