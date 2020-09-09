@@ -127,7 +127,7 @@ class TokenPool
         // cache token properties
         $this->publicUrl = $this->getPublicUrlFromToken($token);
         $this->tokenId = $token->getId();
-dump($token);
+
         return $token;
     }
 

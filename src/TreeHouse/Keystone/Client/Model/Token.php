@@ -12,7 +12,7 @@ class Token implements \JsonSerializable
     protected $id;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $expires;
 
@@ -23,9 +23,9 @@ class Token implements \JsonSerializable
 
     /**
      * @param string    $id
-     * @param \DateTime $expires
+     * @param \DateTimeInterface $expires
      */
-    public function __construct($id, \DateTime $expires)
+    public function __construct($id, \DateTimeInterface $expires)
     {
         $this->id = $id;
         $this->expires = $expires;
